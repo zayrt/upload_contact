@@ -15,9 +15,17 @@ class PageController < ApplicationController
   	@lists = check_format(check_doublon(s.parse))
   end
 
+  def swap_list list1, list2, n, msg
+  	lists[:first][i] << "Lastname and/or firstname have less than 3 char."
+  	lists[:second] << lists[:first][i]
+  	lists[:first].delete_at(i)
+  end 
+
   def check_format lists
   	i = 0
+  	#raise lists.inspect
   	while i < lists[:first].length
+  		puts lists[:first][i].inspect
   		if lists[:first][i][0].length < 3 || lists[:first][i][1].length < 3
   			lists[:first][i] << "Lastname and/or firstname have less than 3 char."
   			lists[:second] << lists[:first][i]
@@ -26,12 +34,14 @@ class PageController < ApplicationController
   			lists[:first][i] << "This email doesn't have a good format."
   			lists[:second] << lists[:first][i]
   			lists[:first].delete_at(i)
-  		elsif (lists[:first][i][0] != "first_name" && lists[:first][i][1] != "last_name") && (lists[:first][i][0].match(/\A[a-zA-Z]?[a-z0-9]+\z/).nil? || lists[:first][i][1].match(/\A[a-zA-Z0-9]+\z/).nil?)
+  		elsif ((lists[:first][i][0] != "first_name" && lists[:first][i][1] != "last_name") && (lists[:first][i][0].match(/\A[a-zA-Z]?[a-z0-9]+\z/).nil? || lists[:first][i][1].match(/\A[a-zA-Z0-9]+\z/).nil?))
   			lists[:first][i] << "Firstname and/or lastname doesn't have a good format."
   			lists[:second] << lists[:first][i]
   			lists[:first].delete_at(i)
+  		else
+  			i += 1
   		end
-  		i += 1
+  		
   	end
   	return lists
   end
@@ -54,7 +64,7 @@ class PageController < ApplicationController
   				end
   			end
   			j += 1
-  		end
+  		end 
   		i += 1
   	end
   	return {first: first_list, second: second_list}
