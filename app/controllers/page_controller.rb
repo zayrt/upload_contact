@@ -12,13 +12,17 @@ class PageController < ApplicationController
   		redirect_to root_path, alert: "This file doesn't have the xlsx format."
   		return
   	end
+  	if s.to_s == "{}"
+  		redirect_to root_path, alert: "This file is nil."
+  		return
+  	end
   	@lists = check_format(check_doublon(s.parse))
   end
 
   def swap_list list1, list2, n, msg
-  	lists[:first][i] << "Lastname and/or firstname have less than 3 char."
-  	lists[:second] << lists[:first][i]
-  	lists[:first].delete_at(i)
+  	list1[n] << msg
+  	list2 << list1[n]
+  	list1.delete_at(n)
   end 
 
   def check_format lists
@@ -27,21 +31,14 @@ class PageController < ApplicationController
   	while i < lists[:first].length
   		puts lists[:first][i].inspect
   		if lists[:first][i][0].length < 3 || lists[:first][i][1].length < 3
-  			lists[:first][i] << "Lastname and/or firstname have less than 3 char."
-  			lists[:second] << lists[:first][i]
-  			lists[:first].delete_at(i)
+  			swap_list(lists[:first], lists[:second], i, "Lastname and/or firstname have less than 3 char.")
   		elsif lists[:first][i][2] != "email" && lists[:first][i][2].match(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).nil?
-  			lists[:first][i] << "This email doesn't have a good format."
-  			lists[:second] << lists[:first][i]
-  			lists[:first].delete_at(i)
+  			swap_list(lists[:first], lists[:second], i, "This email doesn't have a good format.")
   		elsif ((lists[:first][i][0] != "first_name" && lists[:first][i][1] != "last_name") && (lists[:first][i][0].match(/\A[a-zA-Z]?[a-z0-9]+\z/).nil? || lists[:first][i][1].match(/\A[a-zA-Z0-9]+\z/).nil?))
-  			lists[:first][i] << "Firstname and/or lastname doesn't have a good format."
-  			lists[:second] << lists[:first][i]
-  			lists[:first].delete_at(i)
+  			swap_list(lists[:first], lists[:second], i, "Firstname and/or lastname doesn't have a good format.")
   		else
   			i += 1
   		end
-  		
   	end
   	return lists
   end
@@ -54,13 +51,9 @@ class PageController < ApplicationController
   		while j < first_list.length
   			if i != j
   				if first_list[i][0].casecmp(first_list[j][0]) == 0 && first_list[i][1].casecmp(first_list[j][1]) == 0
-  					first_list[j] << "This firstname and lastname already exist."
-  					second_list << first_list[j]
-  					first_list.delete_at(j)
+  					swap_list(first_list, second_list, j, "This firstname and lastname already exist.")
   				elsif first_list[i][2].casecmp(first_list[j][2]) == 0
-  					first_list[j] << "This email already exist."
-  					second_list << first_list[j] 
-  					first_list.delete_at(j)
+  					swap_list(first_list, second_list, j, "This email already exist.")
   				end
   			end
   			j += 1
