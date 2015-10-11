@@ -1,0 +1,17 @@
+h1 Final list
+table
+	|
+	tbody
+		- @lists[:first].each do | text |
+			tr
+				- text.each do | t | 
+					td = t
+
+h1 Error list
+table
+	|
+	tbody
+		- @lists[:second].each do | text |
+			tr
+				- text.each do | t | 
+					td = t

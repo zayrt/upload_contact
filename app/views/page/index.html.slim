@@ -1,0 +1,6 @@
+h1 Upload your contacts!
+= form_tag '/upload', :multipart => true do
+   = file_field_tag "file"
+   br
+   br
+   = submit_tag "Upload"
