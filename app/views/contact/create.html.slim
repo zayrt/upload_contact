@@ -1,28 +1,32 @@
-h1 DB list
-table
-	|
-	thead
-		tr
-			th Firstname
-			th Lastname
-			th Email
-	tbody
-		- @contacts.each do | c |
-			tr
-				td = c.firstname
-				td = c.lastname
-				td = c.email
-h1 Error list
-table
-	|
-	thead
-		tr
-			th Firstname
-			th Lastname
-			th Email
-			th Reason
-	tbody
-		- @errlist.each do | text |
-			tr
-				- text.each do | t | 
-					td = t
+.container
+   .row
+			h1 DB list
+			table.table.table-striped.table-bordered.table-hover
+				|
+				thead
+					tr
+						th Firstname
+						th Lastname
+						th Email
+				tbody
+					- @contacts.each do | c |
+						tr
+							td = c.firstname
+							td = c.lastname
+							td = c.email
+.container
+   .row
+			h1 Error list
+			table.table.table-striped.table-bordered.table-hover
+				|
+				thead
+					tr
+						th Firstname
+						th Lastname
+						th Email
+						th Reason
+				tbody
+					- @errlist.each do | text |
+						tr
+							- text.each do | t | 
+								td = t

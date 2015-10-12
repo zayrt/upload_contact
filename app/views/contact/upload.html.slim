@@ -1,22 +1,25 @@
-h1 Final list
-table
-	|
-	tbody
-		- @lists[:first].each do | text |
-			tr
-				- text.each do | t | 
-					td = t
-
-h1 Error list
-table
-	|
-	thead
-		tr
-			th Firstname
-			th Lastname
-			th Email
-	tbody
-		- @lists[:second].each do | text |
-			tr
-				- text.each do | t | 
-					td = t
+.container
+   .row
+			h1 Final list
+			table.table.table-striped.table-bordered.table-hover
+				|
+				tbody
+					- @lists[:first].each do | text |
+						tr
+							- text.each do | t | 
+								td = t
+.container
+   .row
+			h1 Error list
+			table.table.table-striped.table-bordered.table-hover
+				|
+				thead
+					tr
+						th Firstname
+						th Lastname
+						th Email
+				tbody
+					- @lists[:second].each do | text |
+						tr
+							- text.each do | t | 
+								td = t
