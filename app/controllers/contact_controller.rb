@@ -9,7 +9,7 @@ class ContactController < ApplicationController
   	if s.class == Hash && s[:code] == 415
   		redirect_to root_path, alert: s[:msg]
   	else
-  		@lists = check_format(check_doublon(s.parse))
+  		@lists = validations(s.parse)
   	end
   end
 
@@ -47,47 +47,38 @@ class ContactController < ApplicationController
   	return s
   end
 
-  def swap_list list1, list2, n, msg
-  	list1[n] << msg
-  	list2 << list1[n]
-  	list1.delete_at(n)
-  end 
-
-  def check_format lists
-  	i = 0
-  	#raise lists.inspect
-  	while i < lists[:first].length
-  		puts lists[:first][i].inspect
-  		if lists[:first][i][0].length < 3 || lists[:first][i][1].length < 3
-  			swap_list(lists[:first], lists[:second], i, "Firstname and/or lastname have less than 3 char.")
-  		elsif lists[:first][i][2] != "email" && lists[:first][i][2].match(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).nil?
-  			swap_list(lists[:first], lists[:second], i, "This email doesn't have a good format.")
-  		elsif ((lists[:first][i][0] != "first_name" && lists[:first][i][1] != "last_name") && (lists[:first][i][0].match(/\A[a-zA-Z]{1}[a-z0-9]+\z/).nil? || lists[:first][i][1].match(/\A[a-zA-Z]{1}[a-z0-9]+\z/).nil?))
-  			swap_list(lists[:first], lists[:second], i, "Firstname and/or lastname doesn't have a good format.")
-  		else
-  			i += 1
-  		end
-  	end
-  	return lists
+  def add_to_errlist list, errlist, msg
+  	list << msg
+  	errlist << list
   end
 
-  def check_doublon first_list
-  	i = 0
-  	second_list = []
-  	while i < first_list.length
-  		j = 0
-  		while j < first_list.length
-  			if i != j
-  				if first_list[i][0].casecmp(first_list[j][0]) == 0 && first_list[i][1].casecmp(first_list[j][1]) == 0
-  					swap_list(first_list, second_list, j, "This firstname and lastname already exist.")
-  				elsif first_list[i][2].casecmp(first_list[j][2]) == 0
-  					swap_list(first_list, second_list, j, "This email already exist.")
-  				end
-  			end
-  			j += 1
-  		end 
-  		i += 1
+  def already_exist?(c, finalist, errlist)
+  	finalist.each do |f|
+  		if f[0].casecmp(c[0]) == 0 && f[1].casecmp(c[1]) == 0
+  			add_to_errlist(c, errlist, "This firstname and lastname already exist.")
+  			return true
+  		elsif f[2].casecmp(c[2]) == 0
+  			add_to_errlist(c, errlist, "This email already exist.")
+  			return true
+  		end
   	end
-  	return {first: first_list, second: second_list}
+  	false
+  end
+
+  def validations list
+  	errlist = []
+  	finalist = []
+  	list.each do |c|
+  		if c[0].length < 3 || c[1].length < 3
+  			add_to_errlist(c, errlist, "Firstname and/or lastname have less than 3 char.")
+  		elsif c[2] != "email" && c[2].match(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).nil?
+  			add_to_errlist(c, errlist, "This email doesn't have a good format.")
+  		elsif ((c[0] != "first_name" && c[1] != "last_name") && (c[0].match(/\A[a-zA-Z]{1}[a-z0-9]+\z/).nil? || c[1].match(/\A[a-zA-Z]{1}[a-z0-9]+\z/).nil?))
+  			add_to_errlist(c, errlist, "Firstname and/or lastname doesn't have a good format.")
+  		elsif !already_exist?(c, finalist, errlist)
+  			finalist << c
+  		end
+  	end
+  	return {final: finalist, error: errlist}
   end
 end

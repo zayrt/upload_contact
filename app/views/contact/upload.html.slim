@@ -4,7 +4,7 @@
 			table.table.table-striped.table-bordered.table-hover
 				|
 				tbody
-					- @lists[:first].each do | text |
+					- @lists[:final].each do | text |
 						tr
 							- text.each do | t | 
 								td = t
@@ -19,7 +19,7 @@
 						th Lastname
 						th Email
 				tbody
-					- @lists[:second].each do | text |
+					- @lists[:error].each do | text |
 						tr
 							- text.each do | t | 
 								td = t
