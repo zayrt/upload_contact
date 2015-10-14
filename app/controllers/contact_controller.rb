@@ -65,10 +65,10 @@ class ContactController < ApplicationController
   	false
   end
 
-  def validations list
+  def validations contacts
   	errlist = []
   	finalist = []
-  	list.each do |c|
+  	contacts.each do |c|
   		if c[0].length < 3 || c[1].length < 3
   			add_to_errlist(c, errlist, "Firstname and/or lastname have less than 3 char.")
   		elsif c[2] != "email" && c[2].match(/\A[\w+\-.]+@[a-z\d\-]+(\.[a-z]+)*\.[a-z]+\z/i).nil?
